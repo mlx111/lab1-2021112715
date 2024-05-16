@@ -1,2 +1,2 @@
 digraph G {
-1->2;1->3;1->4;4->5;4->6;6->7;5->7;3->8;3->6;8->7;2->8;2->5;}
+new->worlds[label="1"];new->civilizations[label="1"];new->life[label="1"];worlds->To[label="1"];explore->strange[label="1"];and->new[label="1"];To->explore[label="1"];To->seek[label="3"];civilizations->To[label="1"];seek->To[label="1"];seek->out[label="1"];strange->new[label="1"];life->and[label="1"];out->new[label="1"];}

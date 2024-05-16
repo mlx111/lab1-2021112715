@@ -1,16 +1,6 @@
-import java.awt.List;
+
 import java.io.*;
 import java.util.*;
-
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.stream.file.FileSinkImages;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-
-import static org.graphstream.stream.file.FileSinkImages.*;
 
 class  GraphViz {
     private final static String osName = System.getProperty("os.name").replaceAll("\\s","");
@@ -340,9 +330,6 @@ class ArcNode {
 
     // ¥Ú”°Õº
     public void printGraph() {
-        for (Map.Entry<String, HashMap<String, Integer>> stringHashMapEntry : graph.entrySet()) {
-
-        }
         for (Map.Entry<String, HashMap<String,Integer>> entry : graph.entrySet()) {
             System.out.print("Vertex " + entry.getKey() + ":");
             entry.getValue().entrySet().forEach(entry1 -> System.out.print(" " + entry1.getKey() + " " + entry1.getValue()));
@@ -355,6 +342,13 @@ class ArcNode {
             addEdge(file.GetNodedata().get(i), file.GetNodedata().get(i+1));
         }
     }
+    public String GetFormat(){
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, HashMap<String, Integer>> mapEntry : graph.entrySet()) {
+            mapEntry.getValue().entrySet().forEach(entry1-> sb.append(mapEntry.getKey()+"->" + entry1.getKey() +"[label="+"\""+entry1.getValue()+"\""+"];"));
+        }
+        return sb.toString();
+    }
 }
 
 public class Main {
@@ -366,9 +360,7 @@ public class Main {
         file.setFname(fileName);
         ArcNode graph = new ArcNode();
         graph.creatGraph(file);
-        graph.printGraph();
-        /*String dotFormat="1->2;1->3;1->4;4->5;4->6;6->7;5->7;3->8;3->6;8->7;2->8;2->5;";
-        createDotGraph(dotFormat, "DotGraph");*/
+        createDotGraph(graph.GetFormat(), "DotGraph");
     }
     public static void createDotGraph(String dotFormat,String fileName)
     {
