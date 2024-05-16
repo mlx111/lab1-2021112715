@@ -1,0 +1,14 @@
+digraph G {
+    node [shape=ellipse, color=blue, style=filled, fontcolor=white];
+    edge [color=gray];
+
+    A [label="Start"];
+    B [label="Process 1"];
+    C [label="Process 2"];
+    D [label="End"];
+
+    A -> B [label="to"];
+    B -> C [label="then"];
+    C -> D [label="finally"];
+    D -> A [label="restart"];
+}
