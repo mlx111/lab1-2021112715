@@ -349,6 +349,41 @@ class ArcNode {
         }
         return sb.toString();
     }
+    public String queryBridgeWords(String word1,String word2) throws IOException {
+        int flag1=1;
+        int flag2=1;
+        if(graph.get(word1)==null){
+            flag1=0;
+        }
+        if(graph.get(word2)==null){
+            flag2=0;
+        }
+        if(flag1==0 && flag2==0){
+            return "No "+ word1+ "and"+ word2+ "in the graph!";
+        }else if(flag1==0){
+            return "No "+word1 +" in the graph!";
+        }else if(flag2==0) {
+            return "No "+word2 +" in the graph!";
+        }
+        int i=0;
+        StringBuilder bridge=new StringBuilder();
+        for(String next:graph.get(word1).keySet()){
+            for(String next2:graph.get(next).keySet()){
+                if(next2.equals(word2)){
+                    i=1;
+                    bridge.append(next+" ");
+                }
+            }
+        }
+        if(i==0){
+            return "No bridge words from "+word1 +"to"+ word2+"!";
+        }
+        else{
+            return "The bridge words from "+word1 +"to"+ word2 +"are:" + bridge;
+        }
+
+
+    }
 }
 
 public class Main {
@@ -361,7 +396,16 @@ public class Main {
         ArcNode graph = new ArcNode();
         graph.creatGraph(file);
         createDotGraph(graph.GetFormat(), "DotGraph");
+        System.out.println("请输入你想执行的操作：");
+        String word1;
+        String word2;
+        System.out.println("请输入第一个单词：");
+        word1 = scanner.nextLine();
+        System.out.println("请输入第二个单词：");
+        word2 = scanner.nextLine();
+        System.out.println(graph.queryBridgeWords(word1, word2));
     }
+
     public static void createDotGraph(String dotFormat,String fileName)
     {
         GraphViz gv=new GraphViz();
