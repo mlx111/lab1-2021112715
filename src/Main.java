@@ -349,6 +349,33 @@ class ArcNode {
         }
         return sb.toString();
     }
+    public ArrayList<String> queryBridgeWords1(String word1, String word2) throws IOException {
+        int flag1=1;
+        int flag2=1;
+        ArrayList<String> bridge = new ArrayList<>();
+        if(graph.get(word1)==null){
+            flag1=0;
+        }
+        if(graph.get(word2)==null){
+            flag2=0;
+        }
+        if(flag1==0 || flag2==0){
+            return bridge;
+        }
+        else {
+            int i=0;
+            for(String next:graph.get(word1).keySet()){
+                for(String next2:graph.get(next).keySet()){
+                    if(next2.equals(word2)){
+                        i=1;
+                        bridge.add(next);
+                    }
+                }
+            }
+            return bridge;
+        }
+
+    }
     public String queryBridgeWords(String word1,String word2) throws IOException {
         int flag1=1;
         int flag2=1;
@@ -371,7 +398,7 @@ class ArcNode {
             for(String next2:graph.get(next).keySet()){
                 if(next2.equals(word2)){
                     i=1;
-                    bridge.append(next+" ");
+                    bridge.append(next).append(" ");
                 }
             }
         }
@@ -383,6 +410,37 @@ class ArcNode {
         }
 
 
+    }
+    public String getstr(ArrayList<String> arrayList){
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < arrayList.size(); i++) {
+            sb.append(arrayList.get(i)).append(" ");
+        }
+        return sb.toString();
+    }
+    public String generateNewText(String old) throws IOException {
+        ArrayList<String> words=new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < old.length(); i++) {
+            if(Character.isWhitespace(old.charAt(i))){
+                words.add(sb.toString());
+                sb = new StringBuilder();
+            }else{
+                sb.append(old.charAt(i));
+            }
+        }
+        words.add(sb.toString());
+        for (int i = 0; i < words.size()-1; i++) {
+            ArrayList<String> strings = queryBridgeWords1(words.get(i), words.get(i + 1));
+            if(!strings.isEmpty()){
+               Random random = new Random();
+                int j = random.nextInt(strings.size());
+                words.add(i+1, strings.get(j));
+                i++;
+            }
+        }
+
+        return getstr(words);
     }
 }
 
@@ -396,14 +454,29 @@ public class Main {
         ArcNode graph = new ArcNode();
         graph.creatGraph(file);
         createDotGraph(graph.GetFormat(), "DotGraph");
-        System.out.println("请输入你想执行的操作：");
-        String word1;
-        String word2;
-        System.out.println("请输入第一个单词：");
-        word1 = scanner.nextLine();
-        System.out.println("请输入第二个单词：");
-        word2 = scanner.nextLine();
-        System.out.println(graph.queryBridgeWords(word1, word2));
+        while (true){
+            System.out.println("请输入你想执行的操作：");
+            int flag = Integer.parseInt(scanner.nextLine());
+            //没有正确处理换行符
+            if(flag==1){
+                String word1;
+                System.out.println("请输入第一个单词：");
+                word1 = scanner.nextLine();
+
+                String word2;
+                System.out.println("请输入第二个单词：");
+                word2 = scanner.nextLine();
+                System.out.println(graph.queryBridgeWords(word1, word2));
+            }
+            else if(flag==2){
+                System.out.println("请输入文本:");
+                String text = scanner.nextLine();
+                System.out.println(graph.generateNewText(text));
+            }
+            else {
+                break;
+            }
+        }
     }
 
     public static void createDotGraph(String dotFormat,String fileName)
