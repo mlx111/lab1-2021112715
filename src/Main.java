@@ -5,7 +5,7 @@ import java.util.*;
 class  GraphViz {
     private final static String osName = System.getProperty("os.name").replaceAll("\\s","");
 
-    private final static String cfgProp = "D:\\IdeaProjects\\shiyan1\\config.properties";
+    private final static String cfgProp = "config.properties";
     private final static Properties configFile = new Properties() {
         private final static long serialVersionUID = 1L; {
             try {
@@ -14,7 +14,7 @@ class  GraphViz {
         }
     };
 
-    private static String TEMP_DIR = "D:\\IdeaProjects\\shiyan1\\src";
+    private static String TEMP_DIR = "src";
 
     private static String DOT = configFile.getProperty("dotFor" + osName);
 
