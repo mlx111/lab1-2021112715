@@ -344,7 +344,7 @@ class ArcNode {
         }
         return sb.toString();
     }
-    public ArrayList<String> queryBridgeWords1(String word1, String word2) throws IOException {
+    public ArrayList<String> queryBridgeWords1(String word1, String word2) {
         int flag1=1;
         int flag2=1;
         ArrayList<String> bridge = new ArrayList<>();
