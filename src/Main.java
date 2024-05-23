@@ -307,10 +307,6 @@ class ArcNode {
     }
 
 
-    public void addVertex(String vertex) {
-        graph.putIfAbsent(vertex, new HashMap<>());
-    }
-
     public void addEdge(String from, String to) {
         graph.putIfAbsent(from, new HashMap<>());
         graph.putIfAbsent(to, new HashMap<>());
@@ -326,21 +322,6 @@ class ArcNode {
     public HashMap<String,Integer> getAdjVertices(String vertex) {
         return graph.getOrDefault(vertex, new HashMap<>());
     }
-
-    // 删除一个顶点
-    public void removeVertex(String vertex) {
-        graph.values().forEach(e -> e.remove(String.valueOf(vertex)));
-        graph.remove(vertex);
-    }
-
-    // 删除一条有向边
-    public void removeEdge(String fromVertex, String toVertex) {
-        HashMap<String,Integer> adjVertices = graph.get(fromVertex);
-        if (adjVertices != null) {
-            adjVertices.remove(String.valueOf(toVertex));
-        }
-    }
-
     // 打印图
     public void printGraph() {
         for (Map.Entry<String, HashMap<String,Integer>> entry : graph.entrySet()) {
