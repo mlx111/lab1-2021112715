@@ -349,10 +349,11 @@ class ArcNode {
             System.out.println();
         }
     }
-    public void creatGraph(MyFile file) throws IOException {
+    public void creatGraph(ArrayList<String> file) throws IOException {
         //添加边
-        for (int i = 0; i < file.GetNodedata().size()-1; i++) {
-            addEdge(file.GetNodedata().get(i), file.GetNodedata().get(i+1));
+
+        for (int i = 0; i < file.size()-1; i++) {
+            addEdge(file.get(i), file.get(i+1));
         }
     }
     public String GetFormat(){
@@ -557,7 +558,9 @@ public class Main {
         String fileName = scanner.nextLine();
         file.setFname(fileName);
         ArcNode graph = new ArcNode();
-        graph.creatGraph(file);
+        ArrayList<String> fileData = new ArrayList<>();
+        fileData=file.GetNodedata();
+        graph.creatGraph(fileData);
         createDotGraph(graph.GetFormat(), "DotGraph");
         while (true) {
             System.out.println("请输入你想执行的操作：");
