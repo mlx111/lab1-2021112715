@@ -390,7 +390,7 @@ class ArcNode {
         }
 
     }
-    public String queryBridgeWords(String word1,String word2) throws IOException {
+    public String queryBridgeWords(String word1,String word2) {
         int flag1=1;
         int flag2=1;
         if(graph.get(word1)==null){
@@ -456,12 +456,10 @@ class ArcNode {
 
         return getstr(words);
     }
-
     public List<String> findShortestPath(String start, String end) {
         Map<String, Integer> distances = new HashMap<>();
         Map<String, String> previousNodes = new HashMap<>();
         PriorityQueue<String> nodes = new PriorityQueue<>(Comparator.comparingInt(distances::get));
-
         for (String vertex : graph.keySet()) {
             if (vertex.equals(start)) {
                 distances.put(vertex, 0);
@@ -562,6 +560,7 @@ public class Main {
         fileData=file.GetNodedata();
         graph.creatGraph(fileData);
         createDotGraph(graph.GetFormat(), "DotGraph");
+        graph.printGraph();
         while (true) {
             System.out.println("请输入你想执行的操作：");
             int flag = Integer.parseInt(scanner.nextLine());
