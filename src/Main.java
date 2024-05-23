@@ -1,6 +1,10 @@
 
 import java.io.*;
 import java.util.*;
+import java.util.PriorityQueue;
+import java.util.Map.Entry;
+import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 class  GraphViz {
     private final static String osName = System.getProperty("os.name").replaceAll("\\s","");
@@ -196,7 +200,16 @@ class  GraphViz {
 
         this.graph = sb;
     }
-
+    public void addPath(List<String> path) {
+        if (path.size() < 2) {
+            return;
+        }
+        for (int i = 0; i < path.size() - 1; i++) {
+            String from = path.get(i);
+            String to = path.get(i + 1);
+            this.addln(from + "->" + to + " [color=red, penwidth=2.0]");
+        }
+    }
 }
 class MyFile {
     String fname;
@@ -433,7 +446,7 @@ class ArcNode {
         for (int i = 0; i < words.size()-1; i++) {
             ArrayList<String> strings = queryBridgeWords1(words.get(i), words.get(i + 1));
             if(!strings.isEmpty()){
-               Random random = new Random();
+                Random random = new Random();
                 int j = random.nextInt(strings.size());
                 words.add(i+1, strings.get(j));
                 i++;
@@ -442,6 +455,98 @@ class ArcNode {
 
         return getstr(words);
     }
+
+    public List<String> findShortestPath(String start, String end) {
+        Map<String, Integer> distances = new HashMap<>();
+        Map<String, String> previousNodes = new HashMap<>();
+        PriorityQueue<String> nodes = new PriorityQueue<>(Comparator.comparingInt(distances::get));
+
+        for (String vertex : graph.keySet()) {
+            if (vertex.equals(start)) {
+                distances.put(vertex, 0);
+            } else {
+                distances.put(vertex, Integer.MAX_VALUE);
+            }
+            nodes.add(vertex);
+        }
+
+        while (!nodes.isEmpty()) {
+            String closest = nodes.poll();
+
+            if (closest.equals(end)) {
+                List<String> path = new ArrayList<>();
+                while (previousNodes.containsKey(closest)) {
+                    path.add(closest);
+                    closest = previousNodes.get(closest);
+                }
+                path.add(start);
+                Collections.reverse(path);
+                return path;
+            }
+
+            if (distances.get(closest) == Integer.MAX_VALUE) {
+                break;
+            }
+
+            for (Entry<String, Integer> neighbor : graph.get(closest).entrySet()) {
+                int alt = distances.get(closest) + neighbor.getValue();
+                if (alt < distances.get(neighbor.getKey())) {
+                    distances.put(neighbor.getKey(), alt);
+                    previousNodes.put(neighbor.getKey(), closest);
+                    nodes.remove(neighbor.getKey());  // remove and re-add to update priority
+                    nodes.add(neighbor.getKey());
+                }
+            }
+        }
+
+        return new ArrayList<>();
+    }
+
+    public int getPathWeight(List<String> path) {
+        int weight = 0;
+        for (int i = 0; i < path.size() - 1; i++) {
+            weight += graph.get(path.get(i)).get(path.get(i + 1));
+        }
+        return weight;
+    }
+
+    public List<String> randomTraverse() {
+        List<String> visitedNodes = new ArrayList<>();
+        Set<String> visitedEdges = new HashSet<>();
+        Random random = new Random();
+        AtomicBoolean stopFlag = new AtomicBoolean(false);
+
+        List<String> nodes = new ArrayList<>(graph.keySet());
+        if (nodes.isEmpty()) {
+            return visitedNodes;
+        }
+
+        String currentNode = nodes.get(random.nextInt(nodes.size()));
+        visitedNodes.add(currentNode);
+
+        while (!stopFlag.get()) {
+            Map<String, Integer> adjVertices = graph.get(currentNode);
+            if (adjVertices.isEmpty()) {
+                break;
+            }
+
+            List<String> nextNodes = new ArrayList<>(adjVertices.keySet());
+            String nextNode = nextNodes.get(random.nextInt(nextNodes.size()));
+
+            String edge = currentNode + "->" + nextNode;
+            if (visitedEdges.contains(edge)) {
+                break;
+            }
+
+            visitedEdges.add(edge);
+            visitedNodes.add(nextNode);
+            currentNode = nextNode;
+        }
+
+        return visitedNodes;
+    }
+
+
 }
 
 public class Main {
@@ -454,26 +559,53 @@ public class Main {
         ArcNode graph = new ArcNode();
         graph.creatGraph(file);
         createDotGraph(graph.GetFormat(), "DotGraph");
-        while (true){
+        while (true) {
             System.out.println("请输入你想执行的操作：");
             int flag = Integer.parseInt(scanner.nextLine());
-            //没有正确处理换行符
-            if(flag==1){
-                String word1;
+            if (flag == 1) {
                 System.out.println("请输入第一个单词：");
-                word1 = scanner.nextLine();
-
-                String word2;
+                String word1 = scanner.nextLine();
                 System.out.println("请输入第二个单词：");
-                word2 = scanner.nextLine();
+                String word2 = scanner.nextLine();
                 System.out.println(graph.queryBridgeWords(word1, word2));
-            }
-            else if(flag==2){
+            } else if (flag == 2) {
                 System.out.println("请输入文本:");
                 String text = scanner.nextLine();
                 System.out.println(graph.generateNewText(text));
-            }
-            else {
+            } else if (flag == 3) {
+                System.out.println("请输入第一个单词：");
+                String word1 = scanner.nextLine();
+                System.out.println("请输入第二个单词：");
+                String word2 = scanner.nextLine();
+                List<String> path = graph.findShortestPath(word1, word2);
+                if (path.isEmpty()) {
+                    System.out.println("这两个单词之间不可达");
+                } else {
+                    int pathWeight = graph.getPathWeight(path);
+                    System.out.println("最短路径为: " + path);
+                    System.out.println("路径长度为: " + pathWeight);
+                    createDotGraphWithHighlight(graph.GetFormat(), path, "DotGraphWithPath");
+                }
+            } else if (flag == 4) {
+                System.out.println("开始随机遍历，输入'stop'随时停止遍历:");
+                List<String> visitedNodes = new ArrayList<>();
+                Thread traverseThread = new Thread(() -> {
+                    visitedNodes.addAll(graph.randomTraverse());
+                });
+                traverseThread.start();
+
+                while (true) {
+                    String input = scanner.nextLine();
+                    if (input.equalsIgnoreCase("stop")) {
+                        traverseThread.interrupt();
+                        break;
+                    }
+                }
+
+                String result = String.join(" ", visitedNodes);
+                System.out.println("遍历的节点: " + result);
+                writeToFile("traverseResult.txt", result);
+            } else {
                 break;
             }
         }
@@ -491,5 +623,23 @@ public class Main {
         File out = new File(fileName+"."+ type);
         gv.writeGraphToFile( gv.getGraph( gv.getDotSource(), type ), out );
     }
-
+    public static void createDotGraphWithHighlight(String dotFormat, List<String> path, String fileName) {
+        GraphViz gv = new GraphViz();
+        gv.addln(gv.start_graph());
+        gv.add(dotFormat);
+        gv.addPath(path);
+        gv.addln(gv.end_graph());
+        String type = "png";
+        gv.decreaseDpi();
+        gv.decreaseDpi();
+        File out = new File(fileName + "." + type);
+        gv.writeGraphToFile(gv.getGraph(gv.getDotSource(), type), out);
+    }
+    public static void writeToFile(String fileName, String content) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            writer.write(content);
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + e.getMessage());
+        }
+    }
 }
