@@ -537,7 +537,7 @@ public class Main {
         String fileName = scanner.nextLine();
         file.setFname(fileName);
         ArcNode graph = new ArcNode();
-        ArrayList<String> fileData = new ArrayList<>();
+        ArrayList<String> fileData;
         fileData=file.GetNodedata();
         graph.creatGraph(fileData);
         createDotGraph(graph.GetFormat(), "DotGraph");
