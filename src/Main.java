@@ -349,9 +349,11 @@ class ArcNode {
         int flag2=1;
         ArrayList<String> bridge = new ArrayList<>();
         if(graph.get(word1)==null){
+           // System.out.println("f0");
             flag1=0;
         }
         if(graph.get(word2)==null){
+          //  System.out.println("f1");
             flag2=0;
         }
         if(flag1==0 || flag2==0){
@@ -381,7 +383,7 @@ class ArcNode {
             flag2=0;
         }
         if(flag1==0 && flag2==0){
-            return "No "+ word1+ "and"+ word2+ "in the graph!";
+            return "No "+ word1+ "and "+ word2+ " in the graph!";
         }else if(flag1==0){
             return "No "+word1 +" in the graph!";
         }else if(flag2==0) {
@@ -398,10 +400,10 @@ class ArcNode {
             }
         }
         if(i==0){
-            return "No bridge words from "+word1 +"to"+ word2+"!";
+            return "No bridge words from "+word1 +" to "+ word2+"!";
         }
         else{
-            return "The bridge words from "+word1 +"to"+ word2 +"are:" + bridge;
+            return "The bridge words from "+word1 +" to " + word2 +" are: " + bridge;
         }
 
 
@@ -413,12 +415,14 @@ class ArcNode {
         }
         return sb.toString();
     }
-    public String generateNewText(String old) throws IOException {
+    public String generateNewText(String old) {
         ArrayList<String> words=new ArrayList<>();
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < old.length(); i++) {
             if(Character.isWhitespace(old.charAt(i))){
-                words.add(sb.toString());
+                if(!sb.toString().isEmpty()){
+                    words.add(sb.toString());
+                }
                 sb = new StringBuilder();
             }else{
                 sb.append(old.charAt(i));
