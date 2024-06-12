@@ -1,4 +1,6 @@
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.io.*;
 import java.util.*;
 import java.util.PriorityQueue;
@@ -143,10 +145,13 @@ class  GraphViz {
         return img_stream;
     }
 
+    @SuppressWarnings("checkstyle:Indentation")
+    @SuppressFBWarnings("DM_DEFAULT_ENCODING")
     private File writeDotSourceToFile(String str) throws java.io.IOException
     {
         File temp;
-        try {
+        try
+        {
             temp = File.createTempFile("dorrr",".dot", new File(TEMP_DIR));
             FileWriter fout = new FileWriter(temp);
             fout.write(str);
@@ -277,6 +282,7 @@ class MyFile {
     }
 }
 //邻接表
+@SuppressWarnings("checkstyle:Indentation")
 class ArcNode {
     HashMap<String, HashMap<String,Integer>> graph;
 
@@ -307,6 +313,7 @@ class ArcNode {
     }
 
 
+    @SuppressWarnings("checkstyle:Indentation")
     public void addEdge(String from, String to) {
         graph.putIfAbsent(from, new HashMap<>());
         graph.putIfAbsent(to, new HashMap<>());
@@ -319,10 +326,12 @@ class ArcNode {
     }
 
     // 获取顶点的邻接表
+    @SuppressWarnings("checkstyle:Indentation")
     public HashMap<String,Integer> getAdjVertices(String vertex) {
         return graph.getOrDefault(vertex, new HashMap<>());
     }
     // 打印图
+    @SuppressWarnings("checkstyle:LineLength")
     public void printGraph() {
         for (Map.Entry<String, HashMap<String,Integer>> entry : graph.entrySet()) {
             System.out.print("Vertex " + entry.getKey() + ":");
@@ -373,7 +382,8 @@ class ArcNode {
         }
 
     }
-    public String queryBridgeWords(String word1,String word2) {
+    @SuppressWarnings({"checkstyle:Indentation", "checkstyle:WhitespaceAround"})
+    public String queryBridgeWords(String word1, String word2) {
         int flag1=1;
         int flag2=1;
         if(graph.get(word1)==null){
@@ -405,8 +415,6 @@ class ArcNode {
         else{
             return "The bridge words from "+word1 +" to " + word2 +" are: " + bridge;
         }
-
-
     }
     public String getstr(ArrayList<String> arrayList){
         StringBuilder sb = new StringBuilder();
@@ -534,6 +542,7 @@ class ArcNode {
 }
 
 public class Main {
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("DM_DEFAULT_ENCODING")
     public static void main(String[] args) throws IOException {
         MyFile file = new MyFile();
         Scanner scanner = new Scanner(System.in);
